@@ -1,0 +1,1699 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>용해도곱 상수의 결정 보고서</title>
+  <style>
+    :root {
+      --ink: #14212f;
+      --muted: #5b6877;
+      --line: #d7e0ea;
+      --panel: #f7fafc;
+      --field: #ffffff;
+      --accent: #0f766e;
+      --accent-strong: #115e59;
+      --warn: #b45309;
+      --danger: #b91c1c;
+      --good: #166534;
+      --soft-warn: #fff7ed;
+      --soft-good: #ecfdf5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Malgun Gothic", sans-serif;
+      color: var(--ink);
+      background: #eef2f5;
+      line-height: 1.55;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 22px 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    main {
+      padding: 22px 0 48px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    button,
+    .file-label {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--ink);
+      border-radius: 8px;
+      min-height: 38px;
+      padding: 8px 12px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover,
+    .file-label:hover {
+      border-color: #9fb0c3;
+      background: #f8fbfd;
+    }
+
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    button.primary:hover {
+      background: var(--accent-strong);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: wait;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--field);
+      color: var(--ink);
+      font: inherit;
+      padding: 10px 11px;
+    }
+
+    input:focus,
+    textarea:focus,
+    button:focus,
+    .file-label:focus-within {
+      outline: 3px solid rgba(15, 118, 110, 0.18);
+      border-color: var(--accent);
+    }
+
+    input[type="number"] {
+      min-width: 112px;
+    }
+
+    textarea {
+      min-height: 128px;
+      resize: vertical;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-6 { grid-column: span 6; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+
+    section {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 18px 0 10px;
+      font-size: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #29394b;
+      margin-bottom: 6px;
+    }
+
+    .help {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .notice {
+      padding: 11px 12px;
+      border-radius: 8px;
+      border: 1px solid #f0d7a7;
+      background: var(--soft-warn);
+      color: #663c00;
+      font-size: 13px;
+      margin: 10px 0 0;
+    }
+
+    .status {
+      min-height: 38px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status.ok {
+      border-color: #bbf7d0;
+      background: var(--soft-good);
+      color: var(--good);
+    }
+
+    .status.warn {
+      border-color: #fed7aa;
+      background: var(--soft-warn);
+      color: var(--warn);
+    }
+
+    .status.error {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: var(--danger);
+    }
+
+    .status a {
+      color: inherit;
+      font-weight: 800;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+      font-size: 13px;
+    }
+
+    .result-table {
+      min-width: 720px;
+    }
+
+    .graph-data table {
+      min-width: 820px;
+      margin-bottom: 12px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      padding: 8px;
+      vertical-align: top;
+    }
+
+    th:last-child,
+    td:last-child {
+      border-right: 0;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    th {
+      background: var(--panel);
+      text-align: left;
+      color: #31455b;
+      font-weight: 700;
+    }
+
+    td.condition {
+      min-width: 148px;
+      font-weight: 700;
+      color: #1d3146;
+    }
+
+    td.item-label {
+      min-width: 360px;
+    }
+
+    td.measure-value {
+      min-width: 190px;
+    }
+
+    td input {
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .calc-warning {
+      color: var(--danger);
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .formula {
+      display: grid;
+      gap: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      color: #334155;
+      font-size: 13px;
+    }
+
+    .chart-shell {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .fit-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+      gap: 10px;
+      margin: 10px 0 0;
+      color: #334155;
+      font-size: 13px;
+    }
+
+    .fit-summary div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 9px 10px;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: 430px;
+      box-sizing: border-box;
+    }
+
+    .rubric {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(130px, 1fr));
+      gap: 10px;
+    }
+
+    .rubric-item {
+      border: 1px solid var(--line);
+      background: #fbfdff;
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 154px;
+    }
+
+    .rubric-points {
+      color: var(--accent-strong);
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .rubric-title {
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .rubric-note {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .submit-panel {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      position: sticky;
+      bottom: 0;
+      background: rgba(238, 242, 245, 0.92);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--line);
+      padding: 12px 0;
+    }
+
+    .file-label input {
+      display: none;
+    }
+
+    @media (max-width: 860px) {
+      .topbar,
+      .submit-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        justify-content: flex-start;
+      }
+
+      .span-3,
+      .span-4,
+      .span-6,
+      .span-8 {
+        grid-column: span 12;
+      }
+
+      section {
+        padding: 14px;
+      }
+
+      .rubric {
+        grid-template-columns: 1fr;
+      }
+
+      .fit-summary {
+        grid-template-columns: 1fr;
+      }
+
+      canvas {
+        height: 360px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div>
+        <h1>용해도곱 상수의 결정</h1>
+        <p class="subtitle">AP 일반화학 수행평가 보고서</p>
+      </div>
+      <div class="toolbar" aria-label="보고서 저장 도구">
+        <button type="button" id="saveDraftBtn">임시저장</button>
+        <button type="button" id="downloadDraftBtn">초안 DOC 저장</button>
+        <label class="file-label" for="loadDraftInput">초안 불러오기
+          <input type="file" id="loadDraftInput" accept=".doc,.html,.htm,.json,application/msword,application/json,text/html">
+        </label>
+        <button type="button" id="fillCalcBtn">계산값 채우기</button>
+        <button type="button" id="fillTheoryBtn">이론값 예시</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="draftBanner" class="status warn hidden"></div>
+    <div id="runtimeBanner" class="status warn hidden"></div>
+
+    <section>
+      <h2>학생 정보</h2>
+      <div class="grid">
+        <div class="span-3">
+          <label for="studentId">학번</label>
+          <input id="studentId" name="studentId" inputmode="numeric" autocomplete="off" placeholder="예: 3101">
+        </div>
+        <div class="span-3">
+          <label for="studentName">이름</label>
+          <input id="studentName" name="studentName" autocomplete="name">
+        </div>
+        <div class="span-3">
+          <label for="className">반</label>
+          <input id="className" name="className" readonly>
+        </div>
+        <div class="span-3">
+          <label for="submitTime">작성 상태</label>
+          <input id="submitTime" readonly>
+        </div>
+      </div>
+      <div id="studentCheck" class="help"></div>
+    </section>
+
+    <section>
+      <h2>계산 기준</h2>
+      <div class="formula">
+        <div>총 [OH-] = (0.10M HCl x 적정에 소비된 HCl 부피) / 10mL</div>
+        <div>NaOH 용액에서 Ca(OH)2 유래 [OH-] = 총 [OH-] - 초기 NaOH 농도</div>
+        <div>[Ca2+] = Ca(OH)2 유래 [OH-] / 2</div>
+        <div>Ksp = [Ca2+] x (평형 상태의 총 [OH-])^2</div>
+      </div>
+      <p class="notice">공통이온이 들어 있는 NaOH 용액에서는 Ksp의 [OH-] 항에 평형 상태의 총 [OH-]를 사용합니다. 원본 안내에서 헷갈릴 수 있는 부분이라 이 보고서에서는 위 기준으로 통일합니다.</p>
+    </section>
+
+    <section>
+      <h2>실험 결과</h2>
+      <div class="table-scroll">
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th>종류</th>
+              <th>항목</th>
+              <th>측정값</th>
+              <th>이론값</th>
+            </tr>
+          </thead>
+          <tbody id="conditionRows">
+            <tr data-condition-row="water">
+              <td class="condition" rowspan="5">
+                증류수 속 Ca(OH)2
+                <div class="help">초기 [OH-] 0M</div>
+                <div class="calc-warning" data-warning="water"></div>
+              </td>
+              <td class="item-label">1) 적정에 소비된 0.10M HCl의 부피 (mL)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-field="hclVolumeMl" aria-label="증류수 HCl 소비 부피 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-field="theoryHclVolumeMl" aria-label="증류수 HCl 소비 부피 이론값"></td>
+            </tr>
+            <tr data-condition-row="water">
+              <td class="item-label">2) 용액 중 OH- 이온의 총 농도(M')</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-field="totalOh" aria-label="증류수 총 OH 농도 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-field="theoryTotalOh" aria-label="증류수 총 OH 농도 이론값"></td>
+            </tr>
+            <tr data-condition-row="water">
+              <td class="item-label">3) Ca(OH)2의 용해에 의한 OH- 이온의 농도(M)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-field="dissolvedOh" aria-label="증류수 Ca(OH)2 유래 OH 농도 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-field="theoryDissolvedOh" aria-label="증류수 Ca(OH)2 유래 OH 농도 이론값"></td>
+            </tr>
+            <tr data-condition-row="water">
+              <td class="item-label">4) Ca2+ 이온의 농도 = Ca(OH)2의 용해도(M)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-field="ca" aria-label="증류수 Ca 이온 농도 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-field="theoryCa" aria-label="증류수 Ca 이온 농도 이론값"></td>
+            </tr>
+            <tr data-condition-row="water">
+              <td class="item-label">5) 용해도곱 상수(Ksp) = [Ca2+][OH-]^2 (25 C)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-field="ksp" aria-label="증류수 Ksp 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-field="theoryKsp" aria-label="증류수 Ksp 이론값"></td>
+            </tr>
+
+            <tr data-condition-row="naoh100">
+              <td class="condition" rowspan="5">
+                0.10M NaOH 용액 속 Ca(OH)2
+                <div class="help">초기 [OH-] 0.10M</div>
+                <div class="calc-warning" data-warning="naoh100"></div>
+              </td>
+              <td class="item-label">1) 적정에 소비된 0.10M HCl의 부피 (mL)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-field="hclVolumeMl" aria-label="0.10M NaOH HCl 소비 부피 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-field="theoryHclVolumeMl" aria-label="0.10M NaOH HCl 소비 부피 이론값"></td>
+            </tr>
+            <tr data-condition-row="naoh100">
+              <td class="item-label">2) 용액 중 OH- 이온의 총 농도(M')</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-field="totalOh" aria-label="0.10M NaOH 총 OH 농도 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-field="theoryTotalOh" aria-label="0.10M NaOH 총 OH 농도 이론값"></td>
+            </tr>
+            <tr data-condition-row="naoh100">
+              <td class="item-label">3) Ca(OH)2의 용해에 의한 OH- 이온의 농도(M)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-field="dissolvedOh" aria-label="0.10M NaOH Ca(OH)2 유래 OH 농도 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-field="theoryDissolvedOh" aria-label="0.10M NaOH Ca(OH)2 유래 OH 농도 이론값"></td>
+            </tr>
+            <tr data-condition-row="naoh100">
+              <td class="item-label">4) Ca2+ 이온의 농도 = Ca(OH)2의 용해도(M)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-field="ca" aria-label="0.10M NaOH Ca 이온 농도 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-field="theoryCa" aria-label="0.10M NaOH Ca 이온 농도 이론값"></td>
+            </tr>
+            <tr data-condition-row="naoh100">
+              <td class="item-label">5) 용해도곱 상수(Ksp) = [Ca2+][OH-]^2 (25 C)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-field="ksp" aria-label="0.10M NaOH Ksp 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-field="theoryKsp" aria-label="0.10M NaOH Ksp 이론값"></td>
+            </tr>
+
+            <tr data-condition-row="naoh050">
+              <td class="condition" rowspan="5">
+                0.050M NaOH 용액 속 Ca(OH)2
+                <div class="help">초기 [OH-] 0.050M</div>
+                <div class="calc-warning" data-warning="naoh050"></div>
+              </td>
+              <td class="item-label">1) 적정에 소비된 0.10M HCl의 부피 (mL)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-field="hclVolumeMl" aria-label="0.050M NaOH HCl 소비 부피 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-field="theoryHclVolumeMl" aria-label="0.050M NaOH HCl 소비 부피 이론값"></td>
+            </tr>
+            <tr data-condition-row="naoh050">
+              <td class="item-label">2) 용액 중 OH- 이온의 총 농도(M')</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-field="totalOh" aria-label="0.050M NaOH 총 OH 농도 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-field="theoryTotalOh" aria-label="0.050M NaOH 총 OH 농도 이론값"></td>
+            </tr>
+            <tr data-condition-row="naoh050">
+              <td class="item-label">3) Ca(OH)2의 용해에 의한 OH- 이온의 농도(M)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-field="dissolvedOh" aria-label="0.050M NaOH Ca(OH)2 유래 OH 농도 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-field="theoryDissolvedOh" aria-label="0.050M NaOH Ca(OH)2 유래 OH 농도 이론값"></td>
+            </tr>
+            <tr data-condition-row="naoh050">
+              <td class="item-label">4) Ca2+ 이온의 농도 = Ca(OH)2의 용해도(M)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-field="ca" aria-label="0.050M NaOH Ca 이온 농도 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-field="theoryCa" aria-label="0.050M NaOH Ca 이온 농도 이론값"></td>
+            </tr>
+            <tr data-condition-row="naoh050">
+              <td class="item-label">5) 용해도곱 상수(Ksp) = [Ca2+][OH-]^2 (25 C)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-field="ksp" aria-label="0.050M NaOH Ksp 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-field="theoryKsp" aria-label="0.050M NaOH Ksp 이론값"></td>
+            </tr>
+
+            <tr data-condition-row="naoh025">
+              <td class="condition" rowspan="5">
+                0.025M NaOH 용액 속 Ca(OH)2
+                <div class="help">초기 [OH-] 0.025M</div>
+                <div class="calc-warning" data-warning="naoh025"></div>
+              </td>
+              <td class="item-label">1) 적정에 소비된 0.10M HCl의 부피 (mL)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-field="hclVolumeMl" aria-label="0.025M NaOH HCl 소비 부피 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-field="theoryHclVolumeMl" aria-label="0.025M NaOH HCl 소비 부피 이론값"></td>
+            </tr>
+            <tr data-condition-row="naoh025">
+              <td class="item-label">2) 용액 중 OH- 이온의 총 농도(M')</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-field="totalOh" aria-label="0.025M NaOH 총 OH 농도 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-field="theoryTotalOh" aria-label="0.025M NaOH 총 OH 농도 이론값"></td>
+            </tr>
+            <tr data-condition-row="naoh025">
+              <td class="item-label">3) Ca(OH)2의 용해에 의한 OH- 이온의 농도(M)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-field="dissolvedOh" aria-label="0.025M NaOH Ca(OH)2 유래 OH 농도 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-field="theoryDissolvedOh" aria-label="0.025M NaOH Ca(OH)2 유래 OH 농도 이론값"></td>
+            </tr>
+            <tr data-condition-row="naoh025">
+              <td class="item-label">4) Ca2+ 이온의 농도 = Ca(OH)2의 용해도(M)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-field="ca" aria-label="0.025M NaOH Ca 이온 농도 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-field="theoryCa" aria-label="0.025M NaOH Ca 이온 농도 이론값"></td>
+            </tr>
+            <tr data-condition-row="naoh025">
+              <td class="item-label">5) 용해도곱 상수(Ksp) = [Ca2+][OH-]^2 (25 C)</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-field="ksp" aria-label="0.025M NaOH Ksp 측정값"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-field="theoryKsp" aria-label="0.025M NaOH Ksp 이론값"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="help">HCl 소비 부피를 입력하면 계산값을 채울 수 있습니다. 직접 구한 값이 다르면 셀을 수정해 제출할 수 있습니다.</p>
+    </section>
+
+    <section>
+      <h2>그래프</h2>
+      <div class="table-scroll graph-data">
+        <table>
+          <thead>
+            <tr>
+              <th>조건</th>
+              <th>실험 log 그래프용 [OH-](M)</th>
+              <th>실험 log 그래프용 [Ca2+](M)</th>
+              <th>이론 log 그래프용 [OH-](M)</th>
+              <th>이론 log 그래프용 [Ca2+](M)</th>
+            </tr>
+          </thead>
+          <tbody id="graphRows">
+            <tr>
+              <td class="condition">증류수</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-graph-field="graphExpOh" aria-label="증류수 그래프용 실험 OH 농도"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-graph-field="graphExpCa" aria-label="증류수 그래프용 실험 Ca 농도"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-graph-field="graphTheoryOh" aria-label="증류수 그래프용 이론 OH 농도"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="water" data-graph-field="graphTheoryCa" aria-label="증류수 그래프용 이론 Ca 농도"></td>
+            </tr>
+            <tr>
+              <td class="condition">0.10M NaOH</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-graph-field="graphExpOh" aria-label="0.10M NaOH 그래프용 실험 OH 농도"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-graph-field="graphExpCa" aria-label="0.10M NaOH 그래프용 실험 Ca 농도"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-graph-field="graphTheoryOh" aria-label="0.10M NaOH 그래프용 이론 OH 농도"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh100" data-graph-field="graphTheoryCa" aria-label="0.10M NaOH 그래프용 이론 Ca 농도"></td>
+            </tr>
+            <tr>
+              <td class="condition">0.050M NaOH</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-graph-field="graphExpOh" aria-label="0.050M NaOH 그래프용 실험 OH 농도"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-graph-field="graphExpCa" aria-label="0.050M NaOH 그래프용 실험 Ca 농도"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-graph-field="graphTheoryOh" aria-label="0.050M NaOH 그래프용 이론 OH 농도"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh050" data-graph-field="graphTheoryCa" aria-label="0.050M NaOH 그래프용 이론 Ca 농도"></td>
+            </tr>
+            <tr>
+              <td class="condition">0.025M NaOH</td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-graph-field="graphExpOh" aria-label="0.025M NaOH 그래프용 실험 OH 농도"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-graph-field="graphExpCa" aria-label="0.025M NaOH 그래프용 실험 Ca 농도"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-graph-field="graphTheoryOh" aria-label="0.025M NaOH 그래프용 이론 OH 농도"></td>
+              <td class="measure-value"><input type="text" inputmode="decimal" data-condition="naoh025" data-graph-field="graphTheoryCa" aria-label="0.025M NaOH 그래프용 이론 Ca 농도"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-shell">
+        <canvas id="graphCanvas" aria-label="log Ca2+ 대 log OH- 그래프"></canvas>
+      </div>
+      <div id="fitSummary" class="fit-summary"></div>
+      <p class="help">그래프용 값은 결과표에서 자동 채워지며 직접 수정할 수 있습니다. 0.0000055, 5.5e-6, 5.5x10^-6 같은 지수 표기를 사용할 수 있습니다.</p>
+    </section>
+
+    <section>
+      <h2>보고서 작성</h2>
+      <div class="grid">
+        <div class="span-12">
+          <label for="goal">실험 목표</label>
+          <textarea id="goal">공통이온효과를 이용하여 Ca(OH)2의 용해도 및 용해도곱 상수를 결정하고, 르샤틀리에 원리를 이해한다.</textarea>
+        </div>
+        <div class="span-12">
+          <label for="observation">관찰 기록</label>
+          <textarea id="observation" placeholder="용액 제조, 여과, 적정 중 색 변화, 종말점 판단 등을 기록"></textarea>
+        </div>
+        <div class="span-12">
+          <label for="solubilityComparison">심화 활동 1. 각 용액에서의 Ca(OH)2 용해도 비교와 이유</label>
+          <textarea id="solubilityComparison" placeholder="NaOH 농도 변화에 따른 용해도 차이를 공통이온효과와 르샤틀리에 원리로 설명"></textarea>
+        </div>
+        <div class="span-12">
+          <label for="kspComparison">심화 활동 2. 용해도곱 비교와 문헌값 차이</label>
+          <textarea id="kspComparison" placeholder="각 조건의 Ksp가 어느 정도 일정한지, 문헌값과 차이가 난다면 가능한 오차 원인을 분석"></textarea>
+        </div>
+        <div class="span-12">
+          <label for="graphInterpretation">심화 활동 3. log[Ca2+] 대 log[OH-] 그래프 해석</label>
+          <textarea id="graphInterpretation" placeholder="이론 그래프와 실험 데이터 점의 관계, 기울기나 분포의 의미를 해석"></textarea>
+        </div>
+        <div class="span-12">
+          <label for="conceptReflection">심화 활동 4. 개념 정리 및 느낀점</label>
+          <textarea id="conceptReflection" placeholder="실험을 통해 이해한 평형, 공통이온효과, 적정, 자료 처리 과정 정리"></textarea>
+        </div>
+        <div class="span-12">
+          <label for="references">참고 자료</label>
+          <textarea id="references" placeholder="문헌 Ksp 값, 검색 자료, 교과서 등"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>채점기준</h2>
+      <div id="rubricList" class="rubric"></div>
+      <p class="notice">채점은 100점 만점이며, 시도와 과학적 논리가 드러나면 부분점수를 충분히 반영합니다. 음의 용해도, 계산 누락, 그래프 누락, 공통이온효과 설명 부재는 감점됩니다.</p>
+    </section>
+
+    <div class="submit-panel">
+      <div id="status" class="status">자동 임시저장이 켜져 있습니다.</div>
+      <button type="button" id="submitBtn" class="primary">보고서 제출</button>
+    </div>
+  </main>
+
+  <script type="application/json" id="bootstrap-json">{}</script>
+  <script>
+    const FALLBACK_STUDENTS = [
+      { id: '3101', name: '박태건', className: '1반' },
+      { id: '3102', name: '우진우', className: '1반' },
+      { id: '3103', name: '유현규', className: '1반' },
+      { id: '3104', name: '이원', className: '1반' },
+      { id: '3105', name: '이재석', className: '1반' },
+      { id: '3106', name: '이주호', className: '1반' },
+      { id: '3107', name: '장지민', className: '1반' },
+      { id: '3108', name: '정유진', className: '1반' },
+      { id: '3109', name: '조상희', className: '1반' },
+      { id: '3110', name: '조현서', className: '1반' },
+      { id: '3111', name: '최아현', className: '1반' },
+      { id: '3201', name: '구동호', className: '2반' },
+      { id: '3202', name: '김민재', className: '2반' },
+      { id: '3203', name: '김민찬', className: '2반' },
+      { id: '3204', name: '김서율', className: '2반' },
+      { id: '3205', name: '김주혜', className: '2반' },
+      { id: '3206', name: '노연호', className: '2반' },
+      { id: '3207', name: '이도현', className: '2반' },
+      { id: '3208', name: '이소율', className: '2반' },
+      { id: '3209', name: '이재원', className: '2반' },
+      { id: '3210', name: '이희림', className: '2반' },
+      { id: '3211', name: '조시훈', className: '2반' },
+      { id: '3212', name: '조정우', className: '2반' },
+      { id: '3301', name: '김건우', className: '3반' },
+      { id: '3302', name: '백준', className: '3반' },
+      { id: '3303', name: '봉서진', className: '3반' },
+      { id: '3304', name: '성지원', className: '3반' },
+      { id: '3305', name: '이승민', className: '3반' },
+      { id: '3306', name: '이주환', className: '3반' },
+      { id: '3307', name: '이창호', className: '3반' },
+      { id: '3308', name: '장윤호', className: '3반' },
+      { id: '3309', name: '정찬', className: '3반' },
+      { id: '3310', name: '진수연', className: '3반' },
+      { id: '3311', name: '최윤서', className: '3반' },
+      { id: '3401', name: '김민서', className: '4반' },
+      { id: '3402', name: '김시은', className: '4반' },
+      { id: '3403', name: '김원중', className: '4반' },
+      { id: '3404', name: '김정원', className: '4반' },
+      { id: '3405', name: '이기울', className: '4반' },
+      { id: '3406', name: '이승재', className: '4반' },
+      { id: '3407', name: '이인재', className: '4반' },
+      { id: '3408', name: '이창현', className: '4반' },
+      { id: '3409', name: '이형신', className: '4반' },
+      { id: '3410', name: '임현진', className: '4반' },
+      { id: '3411', name: '정상수', className: '4반' },
+      { id: '3412', name: '추상연', className: '4반' }
+    ];
+
+    // 새 배포를 만들었다면 아래 한 줄을 배포 화면에서 복사한 /exec URL로 바꾸세요.
+    const FIXED_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyM5O7pBLdjywF1Nnpfnu8MDagnorewtruFEqFvuKQ_IszEKvx5XCE2x8fLEAfOKALlMg/exec';
+
+    const FALLBACK_BOOTSTRAP = {
+      config: { title: '용해도곱 상수의 결정', hclMolarity: 0.10, aliquotMl: 10, theoreticalKsp: 5.5e-6, webAppUrl: FIXED_WEB_APP_URL },
+      conditions: [
+        { id: 'water', label: '증류수 속 Ca(OH)2', shortLabel: '증류수', initialOh: 0 },
+        { id: 'naoh100', label: '0.10M NaOH 용액 속 Ca(OH)2', shortLabel: '0.10M NaOH', initialOh: 0.10 },
+        { id: 'naoh050', label: '0.050M NaOH 용액 속 Ca(OH)2', shortLabel: '0.050M NaOH', initialOh: 0.050 },
+        { id: 'naoh025', label: '0.025M NaOH 용액 속 Ca(OH)2', shortLabel: '0.025M NaOH', initialOh: 0.025 }
+      ],
+      students: FALLBACK_STUDENTS,
+      rubric: [
+        {
+          "key": "calculation",
+          "title": "자료 처리와 계산",
+          "points": 40,
+          "htmlNote": "4가지 용액에서 HCl 소비량, 총 [OH-], Ca(OH)2 유래 [OH-], 용해도([Ca2+]), Ksp를 일관되게 계산합니다. 음의 용해도는 조건당 2.5점 이상 감점합니다."
+        },
+        {
+          "key": "concept",
+          "title": "공통이온효과와 르샤틀리에 원리 해석",
+          "points": 20,
+          "htmlNote": "NaOH 농도가 증가할수록 Ca(OH)2의 용해도가 감소하는 까닭을 공통이온효과와 평형 이동으로 설명합니다."
+        },
+        {
+          "key": "graph",
+          "title": "log[Ca2+] 대 log[OH-] 그래프",
+          "points": 15,
+          "htmlNote": "실험값과 이론값을 모두 표시하고, 축 이름과 경향성을 해석합니다."
+        },
+        {
+          "key": "inquiry",
+          "title": "심화 활동과 오차 분석",
+          "points": 15,
+          "htmlNote": "용해도곱의 상수성, 문헌값과의 차이, 오차 원인을 구체적으로 분석합니다."
+        },
+        {
+          "key": "communication",
+          "title": "보고서 완성도",
+          "points": 10,
+          "htmlNote": "계산 과정, 단위, 관찰 기록, 느낀점이 읽기 쉽게 정리되어 있습니다."
+        }
+      ]
+    };
+    const BOOTSTRAP = loadBootstrapData();
+    const DRAFT_KEY = 'ap-chem-ksp-report-draft-v1';
+    const ids = [
+      'studentId',
+      'studentName',
+      'className',
+      'submitTime',
+      'goal',
+      'observation',
+      'solubilityComparison',
+      'kspComparison',
+      'graphInterpretation',
+      'conceptReflection',
+      'references'
+    ];
+
+    function loadBootstrapData() {
+      const node = document.getElementById('bootstrap-json');
+      if (!node) return FALLBACK_BOOTSTRAP;
+      try {
+        const text = node.textContent.trim();
+        if (!text || text.charAt(0) !== '{') return FALLBACK_BOOTSTRAP;
+        const parsed = JSON.parse(text);
+        return {
+          ...FALLBACK_BOOTSTRAP,
+          ...parsed,
+          conditions: parsed.conditions && parsed.conditions.length ? parsed.conditions : FALLBACK_BOOTSTRAP.conditions,
+          students: parsed.students && parsed.students.length ? parsed.students : FALLBACK_STUDENTS,
+          rubric: parsed.rubric && parsed.rubric.length ? parsed.rubric : FALLBACK_BOOTSTRAP.rubric
+        };
+      } catch (error) {
+        return FALLBACK_BOOTSTRAP;
+      }
+    }
+
+    const $ = (id) => document.getElementById(id);
+    const studentMap = new Map(BOOTSTRAP.students.map((student) => [student.id, student]));
+    let saveTimer = null;
+
+    function init() {
+      renderRubric();
+      bindEvents();
+      updateClassName();
+      updateSubmitTime();
+      updateGraphDataValues();
+      drawGraph();
+      showDraftBanner();
+      updateRuntimeBanner();
+      setInterval(updateSubmitTime, 30000);
+    }
+
+    function renderRubric() {
+      $('rubricList').innerHTML = BOOTSTRAP.rubric.map((item) => `
+        <article class="rubric-item">
+          <div class="rubric-points">${item.points}점</div>
+          <div class="rubric-title">${escapeHtml(item.title)}</div>
+          <div class="rubric-note">${escapeHtml(item.htmlNote)}</div>
+        </article>
+      `).join('');
+    }
+
+    function bindEvents() {
+      $('studentId').addEventListener('input', () => {
+        updateClassName();
+        queueDraftSave();
+      });
+      $('studentName').addEventListener('input', queueDraftSave);
+
+      document.querySelectorAll('textarea').forEach((textarea) => {
+        textarea.addEventListener('input', queueDraftSave);
+      });
+
+      document.querySelectorAll('[data-condition][data-field]').forEach((input) => {
+        input.addEventListener('input', (event) => {
+          if (event.target.dataset.field === 'hclVolumeMl') fillCalculatedRow(event.target.dataset.condition);
+          if (event.target.dataset.field === 'theoryHclVolumeMl') fillTheoreticalRowFromHcl(event.target.dataset.condition);
+          updateWarnings();
+          updateGraphDataValues();
+          drawGraph();
+          queueDraftSave();
+        });
+      });
+
+      document.querySelectorAll('[data-condition][data-graph-field]').forEach((input) => {
+        input.addEventListener('input', (event) => {
+          event.target.dataset.manual = 'true';
+          drawGraph();
+          queueDraftSave();
+        });
+      });
+
+      $('saveDraftBtn').addEventListener('click', () => saveDraft(false));
+      $('downloadDraftBtn').addEventListener('click', downloadDraftFile);
+      $('loadDraftInput').addEventListener('change', loadDraftFile);
+      $('fillCalcBtn').addEventListener('click', () => {
+        BOOTSTRAP.conditions.forEach((condition) => fillCalculatedRow(condition.id));
+        updateWarnings();
+        updateGraphDataValues(true);
+        drawGraph();
+        saveDraft(true);
+        setStatus('계산값을 채웠습니다. 직접 계산한 값과 다르면 수정하세요.', 'ok');
+      });
+      $('fillTheoryBtn').addEventListener('click', () => {
+        fillTheoreticalValues();
+        updateGraphDataValues(true);
+        drawGraph();
+        saveDraft(true);
+        setStatus('이론값 예시를 채웠습니다. 직접 조사한 값으로 수정할 수 있습니다.', 'ok');
+      });
+      $('submitBtn').addEventListener('click', submitReport);
+      window.addEventListener('resize', debounce(drawGraph, 150));
+    }
+
+    function updateSubmitTime() {
+      $('submitTime').value = new Date().toLocaleString('ko-KR', { hour12: false });
+    }
+
+    function updateClassName() {
+      const id = normalizeStudentId($('studentId').value);
+      const student = studentMap.get(id);
+      $('className').value = id.length >= 2 ? Number(id.charAt(1)) + '반' : '';
+      if (!id) {
+        $('studentCheck').textContent = '';
+      } else if (student) {
+        $('studentCheck').textContent = '명단 확인: ' + student.className;
+      } else {
+        $('studentCheck').textContent = '브라우저 명단에서 바로 찾지 못했습니다. 학번과 이름을 확인한 뒤 제출하면 서버에서 다시 확인합니다.';
+      }
+    }
+
+    function fillCalculatedRow(conditionId) {
+      const condition = BOOTSTRAP.conditions.find((item) => item.id === conditionId);
+      if (!condition) return;
+      const hclVolume = readConditionNumber(conditionId, 'hclVolumeMl');
+      if (!Number.isFinite(hclVolume)) return;
+      const totalOh = BOOTSTRAP.config.hclMolarity * hclVolume / BOOTSTRAP.config.aliquotMl;
+      const dissolvedOh = totalOh - condition.initialOh;
+      const ca = dissolvedOh / 2;
+      const ksp = ca * Math.pow(totalOh, 2);
+      writeConditionNumber(conditionId, 'totalOh', totalOh);
+      writeConditionNumber(conditionId, 'dissolvedOh', dissolvedOh);
+      writeConditionNumber(conditionId, 'ca', ca);
+      writeConditionNumber(conditionId, 'ksp', ksp);
+    }
+
+    function fillTheoreticalRowFromHcl(conditionId) {
+      const condition = BOOTSTRAP.conditions.find((item) => item.id === conditionId);
+      if (!condition) return;
+      const hclVolume = readConditionNumber(conditionId, 'theoryHclVolumeMl');
+      if (!Number.isFinite(hclVolume)) return;
+      const totalOh = BOOTSTRAP.config.hclMolarity * hclVolume / BOOTSTRAP.config.aliquotMl;
+      const dissolvedOh = totalOh - condition.initialOh;
+      const ca = dissolvedOh / 2;
+      const ksp = ca * Math.pow(totalOh, 2);
+      writeConditionNumber(conditionId, 'theoryTotalOh', totalOh);
+      writeConditionNumber(conditionId, 'theoryDissolvedOh', dissolvedOh);
+      writeConditionNumber(conditionId, 'theoryCa', ca);
+      writeConditionNumber(conditionId, 'theoryKsp', ksp);
+    }
+
+    function fillTheoreticalValues() {
+      BOOTSTRAP.conditions.forEach((condition) => {
+        const point = solveTheoreticalPoint(condition.initialOh, BOOTSTRAP.config.theoreticalKsp);
+        const hclVolume = point.oh * BOOTSTRAP.config.aliquotMl / BOOTSTRAP.config.hclMolarity;
+        writeConditionNumber(condition.id, 'theoryHclVolumeMl', hclVolume);
+        writeConditionNumber(condition.id, 'theoryTotalOh', point.oh);
+        writeConditionNumber(condition.id, 'theoryDissolvedOh', point.oh - condition.initialOh);
+        writeConditionNumber(condition.id, 'theoryCa', point.ca);
+        writeConditionNumber(condition.id, 'theoryKsp', BOOTSTRAP.config.theoreticalKsp);
+      });
+    }
+
+    function solveTheoreticalPoint(initialOh, ksp) {
+      let low = 0;
+      let high = 0.2;
+      const f = (s) => s * Math.pow(initialOh + 2 * s, 2) - ksp;
+      while (f(high) < 0 && high < 10) high *= 2;
+      for (let i = 0; i < 80; i++) {
+        const mid = (low + high) / 2;
+        if (f(mid) > 0) high = mid;
+        else low = mid;
+      }
+      const ca = (low + high) / 2;
+      return { ca, oh: initialOh + 2 * ca };
+    }
+
+    function updateWarnings() {
+      BOOTSTRAP.conditions.forEach((condition) => {
+        const warning = document.querySelector(`[data-warning="${condition.id}"]`);
+        const dissolvedOh = readConditionNumber(condition.id, 'dissolvedOh');
+        const ca = readConditionNumber(condition.id, 'ca');
+        const ksp = readConditionNumber(condition.id, 'ksp');
+        const messages = [];
+        if (Number.isFinite(dissolvedOh) && dissolvedOh < 0) messages.push('음의 용해도 확인');
+        if (Number.isFinite(ca) && ca < 0) messages.push('[Ca2+] 음수');
+        if (Number.isFinite(ksp) && ksp < 0) messages.push('Ksp 음수');
+        warning.textContent = messages.join(' / ');
+      });
+    }
+
+    function updateGraphDataValues(force) {
+      const mappings = [
+        ['graphExpOh', 'totalOh'],
+        ['graphExpCa', 'ca'],
+        ['graphTheoryOh', 'theoryTotalOh'],
+        ['graphTheoryCa', 'theoryCa']
+      ];
+      BOOTSTRAP.conditions.forEach((condition) => {
+        mappings.forEach(([graphField, sourceField]) => {
+          const input = conditionGraphInput(condition.id, graphField);
+          const value = readConditionNumber(condition.id, sourceField);
+          if (!input || !Number.isFinite(value)) return;
+          if (force || input.dataset.manual !== 'true' || input.value.trim() === '') {
+            input.value = formatForInput(value);
+            if (force) delete input.dataset.manual;
+          }
+        });
+      });
+    }
+
+    function drawGraph() {
+      const canvas = $('graphCanvas');
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      const cssWidth = Math.max(1, Math.floor(rect.width));
+      const cssHeight = Math.max(320, Math.floor(rect.height || 430));
+      canvas.width = Math.floor(cssWidth * ratio);
+      canvas.height = Math.floor(cssHeight * ratio);
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      const width = cssWidth;
+      const height = cssHeight;
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, height);
+
+      const experimental = collectGraphPoints('graphExpOh', 'graphExpCa');
+      const theoretical = collectGraphPoints('graphTheoryOh', 'graphTheoryCa');
+      const all = experimental.concat(theoretical);
+      const margin = { left: 72, right: 24, top: 28, bottom: 58 };
+      const plotW = width - margin.left - margin.right;
+      const plotH = height - margin.top - margin.bottom;
+
+      ctx.strokeStyle = '#d7e0ea';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(margin.left, margin.top, plotW, plotH);
+
+      if (!all.length) {
+        ctx.fillStyle = '#5b6877';
+        ctx.textAlign = 'center';
+        ctx.font = '14px Arial, sans-serif';
+        ctx.fillText('그래프를 그릴 양수 데이터가 없습니다.', width / 2, height / 2);
+        drawAxisLabels(ctx, width, height, margin);
+        updateFitSummary(null, null);
+        return;
+      }
+
+      const xValues = all.map((point) => point.x);
+      const yValues = all.map((point) => point.y);
+      const xMin = Math.floor(Math.min(...xValues) * 10 - 1) / 10;
+      const xMax = Math.ceil(Math.max(...xValues) * 10 + 1) / 10;
+      const yMin = Math.floor(Math.min(...yValues) * 10 - 1) / 10;
+      const yMax = Math.ceil(Math.max(...yValues) * 10 + 1) / 10;
+      const scaleX = (x) => margin.left + ((x - xMin) / Math.max(xMax - xMin, 0.1)) * plotW;
+      const scaleY = (y) => margin.top + plotH - ((y - yMin) / Math.max(yMax - yMin, 0.1)) * plotH;
+
+      drawGrid(ctx, margin, plotW, plotH, xMin, xMax, yMin, yMax, scaleX, scaleY);
+
+      const experimentalFit = linearRegression(experimental);
+      const theoreticalFit = linearRegression(theoretical);
+      drawFitLine(ctx, experimentalFit, xMin, xMax, scaleX, scaleY, '#0f766e', [], margin, plotW, plotH);
+      drawFitLine(ctx, theoreticalFit, xMin, xMax, scaleX, scaleY, '#b45309', [6, 4], margin, plotW, plotH);
+      experimental.forEach((point) => drawPoint(ctx, scaleX(point.x), scaleY(point.y), '#0f766e', point.label, 5));
+      theoretical.forEach((point) => drawPoint(ctx, scaleX(point.x), scaleY(point.y), '#b45309', point.label, 4));
+      drawLegend(ctx, margin.left + 8, margin.top + 10);
+      drawAxisLabels(ctx, width, height, margin);
+      updateFitSummary(experimentalFit, theoreticalFit);
+    }
+
+    function collectGraphPoints(xField, yField) {
+      return BOOTSTRAP.conditions.map((condition) => {
+        const xRaw = readGraphNumber(condition.id, xField);
+        const yRaw = readGraphNumber(condition.id, yField);
+        if (!Number.isFinite(xRaw) || !Number.isFinite(yRaw) || xRaw <= 0 || yRaw <= 0) return null;
+        return {
+          label: graphLabel(condition.id),
+          x: Math.log10(xRaw),
+          y: Math.log10(yRaw)
+        };
+      }).filter(Boolean);
+    }
+
+    function graphLabel(conditionId) {
+      const labels = {
+        water: 'water',
+        naoh100: '0.10M',
+        naoh050: '0.050M',
+        naoh025: '0.025M'
+      };
+      return labels[conditionId] || conditionId;
+    }
+
+    function linearRegression(points) {
+      if (!points || points.length < 2) return null;
+      const n = points.length;
+      const sumX = points.reduce((sum, point) => sum + point.x, 0);
+      const sumY = points.reduce((sum, point) => sum + point.y, 0);
+      const meanX = sumX / n;
+      const meanY = sumY / n;
+      const ssX = points.reduce((sum, point) => sum + Math.pow(point.x - meanX, 2), 0);
+      if (ssX === 0) return null;
+      const slope = points.reduce((sum, point) => sum + (point.x - meanX) * (point.y - meanY), 0) / ssX;
+      const intercept = meanY - slope * meanX;
+      const ssTot = points.reduce((sum, point) => sum + Math.pow(point.y - meanY, 2), 0);
+      const ssRes = points.reduce((sum, point) => sum + Math.pow(point.y - (slope * point.x + intercept), 2), 0);
+      const r2 = ssTot === 0 ? 1 : 1 - ssRes / ssTot;
+      return { slope, intercept, r2, count: n };
+    }
+
+    function drawFitLine(ctx, fit, xMin, xMax, scaleX, scaleY, color, dash, margin, plotW, plotH) {
+      if (!fit) return;
+      ctx.save();
+      if (margin) {
+        ctx.beginPath();
+        ctx.rect(margin.left, margin.top, plotW, plotH);
+        ctx.clip();
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash(dash || []);
+      ctx.beginPath();
+      ctx.moveTo(scaleX(xMin), scaleY(fit.slope * xMin + fit.intercept));
+      ctx.lineTo(scaleX(xMax), scaleY(fit.slope * xMax + fit.intercept));
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function updateFitSummary(experimentalFit, theoreticalFit) {
+      const summary = $('fitSummary');
+      if (!summary) return;
+      const formatFit = (title, fit) => {
+        if (!fit) return `<div><strong>${title}</strong><br>Need at least two positive data points.</div>`;
+        return `<div><strong>${title}</strong><br>log[Ca2+] approx ${fit.slope.toFixed(3)} log[OH-] ${fit.intercept >= 0 ? '+' : '-'} ${Math.abs(fit.intercept).toFixed(3)} / R2=${fit.r2.toFixed(3)}</div>`;
+      };
+      summary.innerHTML = formatFit('Experimental fit', experimentalFit) + formatFit('Theory fit', theoreticalFit);
+    }
+
+    function drawGrid(ctx, margin, plotW, plotH, xMin, xMax, yMin, yMax, scaleX, scaleY) {
+      ctx.font = '12px Arial, sans-serif';
+      ctx.fillStyle = '#5b6877';
+      ctx.strokeStyle = '#edf2f7';
+      ctx.lineWidth = 1;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      for (let i = 0; i <= 5; i++) {
+        const value = xMin + ((xMax - xMin) * i / 5);
+        const x = scaleX(value);
+        ctx.beginPath();
+        ctx.moveTo(x, margin.top);
+        ctx.lineTo(x, margin.top + plotH);
+        ctx.stroke();
+        ctx.fillText(value.toFixed(2), x, margin.top + plotH + 8);
+      }
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      for (let i = 0; i <= 5; i++) {
+        const value = yMin + ((yMax - yMin) * i / 5);
+        const y = scaleY(value);
+        ctx.beginPath();
+        ctx.moveTo(margin.left, y);
+        ctx.lineTo(margin.left + plotW, y);
+        ctx.stroke();
+        ctx.fillText(value.toFixed(2), margin.left - 8, y);
+      }
+    }
+
+    function drawPoint(ctx, x, y, color, label, radius) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawLegend(ctx, x, y) {
+      ctx.font = '12px Arial, sans-serif';
+      ctx.textBaseline = 'middle';
+      ctx.strokeStyle = '#0f766e';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 28, y);
+      ctx.stroke();
+      ctx.fillStyle = '#263646';
+      ctx.fillText('Exp fit', x + 36, y);
+      ctx.strokeStyle = '#b45309';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath();
+      ctx.moveTo(x + 130, y);
+      ctx.lineTo(x + 158, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillText('Theory fit', x + 166, y);
+    }
+
+    function drawAxisLabels(ctx, width, height, margin) {
+      ctx.fillStyle = '#263646';
+      ctx.font = '13px Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('log[OH-]', width / 2, height - 16);
+      ctx.save();
+      ctx.translate(18, height / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText('log[Ca2+]', 0, 0);
+      ctx.restore();
+    }
+
+    function collectPayload(includeChart = false) {
+      const payload = {
+        studentId: normalizeStudentId($('studentId').value),
+        name: $('studentName').value.trim(),
+        conditions: BOOTSTRAP.conditions.map((condition) => ({
+          id: condition.id,
+          hclVolumeMl: readConditionValue(condition.id, 'hclVolumeMl'),
+          totalOh: readConditionValue(condition.id, 'totalOh'),
+          dissolvedOh: readConditionValue(condition.id, 'dissolvedOh'),
+          ca: readConditionValue(condition.id, 'ca'),
+          ksp: readConditionValue(condition.id, 'ksp'),
+          theoryHclVolumeMl: readConditionValue(condition.id, 'theoryHclVolumeMl'),
+          theoryTotalOh: readConditionValue(condition.id, 'theoryTotalOh'),
+          theoryDissolvedOh: readConditionValue(condition.id, 'theoryDissolvedOh'),
+          theoryCa: readConditionValue(condition.id, 'theoryCa'),
+          theoryKsp: readConditionValue(condition.id, 'theoryKsp'),
+          graphExpOh: readGraphValue(condition.id, 'graphExpOh'),
+          graphExpCa: readGraphValue(condition.id, 'graphExpCa'),
+          graphTheoryOh: readGraphValue(condition.id, 'graphTheoryOh'),
+          graphTheoryCa: readGraphValue(condition.id, 'graphTheoryCa'),
+          theoreticalOh: readConditionValue(condition.id, 'theoryTotalOh'),
+          theoreticalCa: readConditionValue(condition.id, 'theoryCa')
+        })),
+        goal: $('goal').value,
+        observation: $('observation').value,
+        solubilityComparison: $('solubilityComparison').value,
+        kspComparison: $('kspComparison').value,
+        graphInterpretation: $('graphInterpretation').value,
+        conceptReflection: $('conceptReflection').value,
+        references: $('references').value
+      };
+      if (includeChart) {
+        drawGraph();
+        payload.chartPng = $('graphCanvas').toDataURL('image/png');
+      }
+      return payload;
+    }
+
+    function applyPayload(payload) {
+      if (!payload || typeof payload !== 'object') return;
+      $('studentId').value = payload.studentId || '';
+      $('studentName').value = payload.name || '';
+      ['goal', 'observation', 'solubilityComparison', 'kspComparison', 'graphInterpretation', 'conceptReflection', 'references'].forEach((id) => {
+        if (payload[id] !== undefined) $(id).value = payload[id];
+      });
+      const byId = new Map((payload.conditions || []).map((condition) => [condition.id, condition]));
+      BOOTSTRAP.conditions.forEach((condition) => {
+        const saved = byId.get(condition.id) || {};
+        if (saved.theoryTotalOh === undefined && saved.theoreticalOh !== undefined) saved.theoryTotalOh = saved.theoreticalOh;
+        if (saved.theoryCa === undefined && saved.theoreticalCa !== undefined) saved.theoryCa = saved.theoreticalCa;
+        if (saved.graphExpOh === undefined) saved.graphExpOh = saved.totalOh;
+        if (saved.graphExpCa === undefined) saved.graphExpCa = saved.ca;
+        if (saved.graphTheoryOh === undefined) saved.graphTheoryOh = saved.theoryTotalOh;
+        if (saved.graphTheoryCa === undefined) saved.graphTheoryCa = saved.theoryCa;
+        ['hclVolumeMl', 'totalOh', 'dissolvedOh', 'ca', 'ksp', 'theoryHclVolumeMl', 'theoryTotalOh', 'theoryDissolvedOh', 'theoryCa', 'theoryKsp'].forEach((field) => {
+          const input = conditionInput(condition.id, field);
+          if (input) input.value = saved[field] ?? '';
+        });
+        ['graphExpOh', 'graphExpCa', 'graphTheoryOh', 'graphTheoryCa'].forEach((field) => {
+          const input = conditionGraphInput(condition.id, field);
+          if (input) {
+            input.value = saved[field] ?? '';
+            if (input.value.trim() !== '') input.dataset.manual = 'true';
+          }
+        });
+      });
+      updateClassName();
+      updateWarnings();
+      updateGraphDataValues();
+      drawGraph();
+    }
+
+    function saveDraft(silent) {
+      const payload = collectPayload(false);
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ savedAt: new Date().toISOString(), payload }));
+      if (!silent) setStatus('이 브라우저에 임시저장했습니다.', 'ok');
+      showDraftBanner(true);
+    }
+
+    function queueDraftSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => saveDraft(true), 700);
+    }
+
+    function showDraftBanner(skipMessage) {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      const banner = $('draftBanner');
+      if (!raw) {
+        banner.classList.add('hidden');
+        return;
+      }
+      if (skipMessage) return;
+      let savedAt = '';
+      try {
+        savedAt = new Date(JSON.parse(raw).savedAt).toLocaleString('ko-KR', { hour12: false });
+      } catch (error) {
+        savedAt = '';
+      }
+      banner.innerHTML = `임시저장본이 있습니다. ${savedAt ? '(' + savedAt + ')' : ''} <button type="button" id="restoreDraftBtn">불러오기</button> <button type="button" id="discardDraftBtn">삭제</button>`;
+      banner.classList.remove('hidden');
+      $('restoreDraftBtn').addEventListener('click', () => {
+        const saved = JSON.parse(localStorage.getItem(DRAFT_KEY));
+        applyPayload(saved.payload);
+        setStatus('임시저장본을 불러왔습니다.', 'ok');
+      });
+      $('discardDraftBtn').addEventListener('click', () => {
+        localStorage.removeItem(DRAFT_KEY);
+        banner.classList.add('hidden');
+        setStatus('임시저장본을 삭제했습니다.', 'warn');
+      });
+    }
+
+    function downloadDraftFile() {
+      const payload = collectPayload(true);
+      const draft = { savedAt: new Date().toISOString(), payload };
+      const docHtml = buildDraftDocHtml(draft);
+      const blob = new Blob(['\ufeff' + docHtml], { type: 'application/msword;charset=utf-8' });
+      const link = document.createElement('a');
+      const id = payload.studentId || '학번';
+      const name = payload.name || '이름';
+      link.href = URL.createObjectURL(blob);
+      link.download = `${sanitizeFileName(id)}_${sanitizeFileName(name)}_용해도곱_보고서초안.doc`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      setStatus('초안 DOC 파일을 저장했습니다. 이 파일은 초안 불러오기로 다시 채울 수 있습니다.', 'ok');
+    }
+
+    function loadDraftFile(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = parseDraftFileText(reader.result);
+          applyPayload(parsed.payload || parsed);
+          saveDraft(true);
+          setStatus('초안 파일을 불러와 입력칸을 채웠습니다.', 'ok');
+        } catch (error) {
+          setStatus('초안 파일을 읽을 수 없습니다. 이 화면에서 저장한 DOC 또는 예전 JSON 초안인지 확인하세요.', 'error');
+        }
+      };
+      reader.readAsText(file, 'utf-8');
+      event.target.value = '';
+    }
+
+    function buildDraftDocHtml(draft) {
+      const payload = draft.payload || {};
+      const json = JSON.stringify(draft);
+      const encoded = encodeBase64Utf8(json);
+      const rows = (payload.conditions || []).map((condition) => `
+        <tr>
+          <td>${escapeHtml(conditionLabel(condition.id))}</td>
+          <td>${escapeHtml(condition.hclVolumeMl)}</td>
+          <td>${escapeHtml(condition.totalOh)}</td>
+          <td>${escapeHtml(condition.dissolvedOh)}</td>
+          <td>${escapeHtml(condition.ca)}</td>
+          <td>${escapeHtml(condition.ksp)}</td>
+          <td>${escapeHtml(condition.theoryTotalOh)}</td>
+          <td>${escapeHtml(condition.theoryCa)}</td>
+        </tr>
+      `).join('');
+      const graphRows = (payload.conditions || []).map((condition) => `
+        <tr>
+          <td>${escapeHtml(conditionLabel(condition.id))}</td>
+          <td>${escapeHtml(condition.graphExpOh)}</td>
+          <td>${escapeHtml(condition.graphExpCa)}</td>
+          <td>${escapeHtml(condition.graphTheoryOh)}</td>
+          <td>${escapeHtml(condition.graphTheoryCa)}</td>
+        </tr>
+      `).join('');
+      const chart = payload.chartPng ? `<p><img src="${payload.chartPng}" style="max-width:650px;width:100%;height:auto;"></p>` : '';
+      const scriptClose = '</scr' + 'ipt>';
+      return `<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>용해도곱 보고서 초안</title>
+  <style>
+    body{font-family:Arial,"Malgun Gothic",sans-serif;line-height:1.6;color:#16202a;}
+    h1{font-size:24px;} h2{font-size:17px;margin-top:22px;}
+    table{border-collapse:collapse;width:100%;font-size:12px;margin:10px 0 18px;}
+    th,td{border:1px solid #999;padding:6px;text-align:left;vertical-align:top;}
+    th{background:#eee;}
+    .answer{white-space:pre-wrap;border:1px solid #ccc;padding:8px;min-height:28px;}
+    .hidden-draft{display:none;mso-hide:all;}
+  </style>
+</head>
+<body>
+  <h1>용해도곱 상수의 결정 보고서 초안</h1>
+  <p>학번: ${escapeHtml(payload.studentId || '')} / 이름: ${escapeHtml(payload.name || '')}</p>
+  <p>저장 시간: ${escapeHtml(new Date(draft.savedAt || Date.now()).toLocaleString('ko-KR', { hour12: false }))}</p>
+  <h2>실험 결과 요약</h2>
+  <table>
+    <thead><tr><th>조건</th><th>HCl(mL)</th><th>총 [OH-]</th><th>Ca(OH)2 유래 [OH-]</th><th>[Ca2+]</th><th>Ksp</th><th>이론 [OH-]</th><th>이론 [Ca2+]</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <h2>그래프 데이터</h2>
+  <table>
+    <thead><tr><th>조건</th><th>실험 [OH-]</th><th>실험 [Ca2+]</th><th>이론 [OH-]</th><th>이론 [Ca2+]</th></tr></thead>
+    <tbody>${graphRows}</tbody>
+  </table>
+  <h2>그래프</h2>
+  ${chart}
+  <h2>관찰 기록</h2><div class="answer">${escapeHtml(payload.observation || '')}</div>
+  <h2>심화 활동 1</h2><div class="answer">${escapeHtml(payload.solubilityComparison || '')}</div>
+  <h2>심화 활동 2</h2><div class="answer">${escapeHtml(payload.kspComparison || '')}</div>
+  <h2>심화 활동 3</h2><div class="answer">${escapeHtml(payload.graphInterpretation || '')}</div>
+  <h2>심화 활동 4</h2><div class="answer">${escapeHtml(payload.conceptReflection || '')}</div>
+  <h2>참고 자료</h2><div class="answer">${escapeHtml(payload.references || '')}</div>
+  <div class="hidden-draft">
+    <script type="application/json" id="draft-json">${escapeHtml(json)}${scriptClose}
+    <!--KSP_DRAFT_JSON_BASE64:${encoded}:KSP_DRAFT_JSON_BASE64_END-->
+  </div>
+</body>
+</html>`;
+    }
+
+    function parseDraftFileText(text) {
+      const raw = String(text || '').replace(/^\ufeff/, '');
+      try {
+        return JSON.parse(raw);
+      } catch (error) {
+        const encodedMatch = raw.match(/KSP_DRAFT_JSON_BASE64:([A-Za-z0-9+/=]+):KSP_DRAFT_JSON_BASE64_END/);
+        if (encodedMatch) return JSON.parse(decodeBase64Utf8(encodedMatch[1]));
+        const scriptMatch = raw.match(/<script[^>]+id=["'](?:draft-json|report-json)["'][^>]*>([\s\S]*?)<\/script>/i);
+        if (scriptMatch) return JSON.parse(unescapeHtml(scriptMatch[1].trim()));
+      }
+      throw new Error('Unsupported draft file');
+    }
+
+    function encodeBase64Utf8(text) {
+      return btoa(unescape(encodeURIComponent(text)));
+    }
+
+    function decodeBase64Utf8(text) {
+      return decodeURIComponent(escape(atob(text)));
+    }
+
+    function conditionLabel(conditionId) {
+      const condition = BOOTSTRAP.conditions.find((item) => item.id === conditionId);
+      return condition ? condition.shortLabel : conditionId;
+    }
+
+    function sanitizeFileName(value) {
+      return String(value || '').replace(/[\\/:*?"<>|]/g, '_').trim() || '초안';
+    }
+
+    function submitReport() {
+      if ($('submitBtn').disabled) return;
+      const payload = collectPayload(true);
+      const validation = validatePayload(payload);
+      if (!validation.ok) {
+        setStatus(validation.message, 'error');
+        return;
+      }
+      if (!window.google || !google.script || !google.script.run) {
+        const webAppUrl = getWebAppUrl();
+        if (webAppUrl) {
+          submitViaWebAppPost(payload, webAppUrl);
+        } else {
+          setStatus('고정 제출 주소를 찾지 못했습니다. 관리자에게 문의하세요.', 'error');
+          updateRuntimeBanner();
+        }
+        return;
+      }
+      $('submitBtn').disabled = true;
+      setStatus('제출 중입니다. 창을 닫지 마세요.', 'warn');
+      google.script.run
+        .withSuccessHandler((result) => {
+          $('submitBtn').disabled = false;
+          if (result && result.ok) {
+            try { localStorage.removeItem(DRAFT_KEY); } catch (error) { /* 접수 완료는 유지 */ }
+            $('draftBanner').classList.add('hidden');
+            setStatus('제출 완료. 보고서가 정상 제출되었습니다.', 'ok');
+          } else {
+            setStatus('제출 결과를 확인하지 못했습니다.', 'warn');
+          }
+        })
+        .withFailureHandler((error) => {
+          $('submitBtn').disabled = false;
+          setStatus(error && error.message ? error.message : '제출 중 오류가 발생했습니다.', 'error');
+        })
+        .submitReport(payload);
+    }
+
+    function getWebAppUrl() {
+      return normalizeWebAppUrl((BOOTSTRAP.config && BOOTSTRAP.config.webAppUrl) || BOOTSTRAP.webAppUrl || FIXED_WEB_APP_URL || '');
+    }
+
+    function isAppsScriptRuntime() {
+      return !!(window.google && google.script && google.script.run);
+    }
+
+    function updateRuntimeBanner() {
+      const banner = $('runtimeBanner');
+      if (!banner) return;
+      banner.classList.add('hidden');
+      banner.innerHTML = '';
+    }
+
+    function normalizeWebAppUrl(value) {
+      let url = String(value || '').trim();
+      if (!url) return '';
+      url = url.replace(/^https:\/\/script\.google\.com\/a\/macros\/[^/]+\/s\//,
+        'https://script.google.com/macros/s/');
+      // /dev를 임의로 바꾸지 않고 정식 웹 앱 주소만 허용합니다.
+      return /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(url) ? url : '';
+    }
+
+    function submitViaWebAppPost(payload, webAppUrl) {
+      try { saveDraft(true); } catch (error) { /* 저장소 제한이 있어도 서버 제출은 진행 */ }
+      $('submitBtn').disabled = true;
+      setStatus('제출 중입니다. 이동한 화면에서 제출 완료를 확인하세요.', 'warn');
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = webAppUrl;
+      form.target = '_self';
+      form.style.display = 'none';
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'payload';
+      input.value = JSON.stringify(payload);
+      form.appendChild(input);
+      document.body.appendChild(form);
+      try {
+        form.submit();
+      } catch (error) {
+        $('submitBtn').disabled = false;
+        setStatus('제출 화면을 열지 못했습니다. 다시 시도하세요.', 'error');
+      } finally {
+        form.remove();
+      }
+    }
+
+    function validatePayload(payload) {
+      if (!payload.studentId || !payload.name) return { ok: false, message: '학번과 이름을 입력하세요.' };
+      const student = studentMap.get(payload.studentId);
+      if (student && normalizeName(student.name) !== normalizeName(payload.name)) return { ok: false, message: '학번과 이름이 명단과 일치하지 않습니다.' };
+      return { ok: true };
+    }
+
+    function readConditionValue(conditionId, field) {
+      const input = conditionInput(conditionId, field);
+      return input ? input.value.trim() : '';
+    }
+
+    function readConditionNumber(conditionId, field) {
+      const value = parseNumericInput(readConditionValue(conditionId, field));
+      return Number.isFinite(value) ? value : NaN;
+    }
+
+    function writeConditionNumber(conditionId, field, value) {
+      const input = conditionInput(conditionId, field);
+      if (input) input.value = Number.isFinite(value) ? formatForInput(value) : '';
+    }
+
+    function conditionInput(conditionId, field) {
+      return document.querySelector(`[data-condition="${conditionId}"][data-field="${field}"]`);
+    }
+
+    function readGraphValue(conditionId, field) {
+      const input = conditionGraphInput(conditionId, field);
+      return input ? input.value.trim() : '';
+    }
+
+    function readGraphNumber(conditionId, field) {
+      const value = parseNumericInput(readGraphValue(conditionId, field));
+      return Number.isFinite(value) ? value : NaN;
+    }
+
+    function conditionGraphInput(conditionId, field) {
+      return document.querySelector(`[data-condition="${conditionId}"][data-graph-field="${field}"]`);
+    }
+
+    function parseNumericInput(value) {
+      let text = String(value || '').trim();
+      if (!text) return NaN;
+      text = normalizeSuperscriptNumber(text);
+      text = text
+        .replace(/,/g, '')
+        .replace(/[−–—]/g, '-')
+        .replace(/\s+/g, '')
+        .replace(/[×xX*]10\^?/g, 'e')
+        .replace(/10\^/g, '1e');
+      const number = Number(text);
+      return Number.isFinite(number) ? number : NaN;
+    }
+
+    function normalizeSuperscriptNumber(text) {
+      const map = { '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁻': '-', '⁺': '+' };
+      return String(text).replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]/g, (char) => map[char] || char);
+    }
+
+    function setStatus(message, tone) {
+      const status = $('status');
+      status.textContent = message;
+      status.className = 'status' + (tone ? ' ' + tone : '');
+    }
+
+    function normalizeStudentId(value) {
+      return normalizeAsciiDigits(value).replace(/[^\d]/g, '');
+    }
+
+    function normalizeName(value) {
+      return String(value || '').replace(/\s/g, '');
+    }
+
+    function normalizeAsciiDigits(value) {
+      return String(value || '').replace(/[０-９]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xFEE0));
+    }
+
+    function formatForInput(value) {
+      if (!Number.isFinite(value)) return '';
+      if (value === 0) return '0';
+      if (Math.abs(value) < 0.001 || Math.abs(value) >= 10000) return value.toExponential(5);
+      return String(Number(value.toPrecision(7)));
+    }
+
+    function formatForDisplay(value) {
+      if (!Number.isFinite(value)) return '';
+      if (value === 0) return '0';
+      if (Math.abs(value) < 0.001 || Math.abs(value) >= 10000) return value.toExponential(4);
+      return String(Number(value.toPrecision(6)));
+    }
+
+    function formatNumber(value) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return '';
+      return number === 0 ? '0' : String(number);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function debounce(fn, delay) {
+      let timer;
+      return function debounced() {
+        clearTimeout(timer);
+        timer = setTimeout(fn, delay);
+      };
+    }
+
+    // 제출 화면에서 뒤로 돌아왔을 때 bfcache의 비활성 버튼을 복구합니다.
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) {
+        $('submitBtn').disabled = false;
+        setStatus('작성 화면으로 돌아왔습니다. 제출 완료 여부를 확인한 뒤 필요하면 다시 제출하세요.', 'warn');
+      }
+    });
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
